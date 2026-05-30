@@ -8,21 +8,21 @@ app = Flask(__name__)
 def home():
     return "Emergency Bot Running"
 
-@app.route("/message", methods=["POST"])
-def message():
+@app.route("/whatsapp", methods=["POST"])
+def whatsapp():
 
-    data = request.json
-
-    msg = data["message"]
+    msg = request.form.get("Body", "")
+    sender = request.form.get("From", "")
 
     result = classify(msg)
 
-    if "EMERGENCY" in result:
+    if result == "EMERGENCY":
         send_alert(
-            f"🚨 EMERGENCY DETECTED\n\nMessage:\n{msg}"
+            f"🚨 EMERGENCY DETECTED 🚨\n\nFrom: {sender}\nMessage: {msg}"
         )
 
-    return result
+    return "OK", 200
+
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=5000)

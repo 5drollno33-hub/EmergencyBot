@@ -1,44 +1,48 @@
-from urllib import response
+import re
 
-from google import genai
-from dotenv import load_dotenv
-import os
+def classify(msg: str) -> str:
+    """
+    Simple rule-based emergency classifier.
+    Returns: "EMERGENCY" or "NORMAL"
+    """
 
-load_dotenv()
+    if not msg:
+        return "NORMAL"
 
-client = genai.Client(
-    api_key=os.getenv("GEMINI_API_KEY")
-)
+    msg = msg.lower()
 
-def classify(message):
+    # Strong emergency keywords
+    emergency_keywords = [
+        "help",
+        "emergency",
+        "danger",
+        "save me",
+        "accident",
+        "fire",
+        "attack",
+        "robbery",
+        "hurt",
+        "bleeding",
+        "police",
+        "kidnap",
+        "sos"
+    ]
 
-    prompt = f"""
-You are an emergency message classifier.
+    # Check keyword match
+    for word in emergency_keywords:
+        if word in msg:
+            return "EMERGENCY"
 
-Classify messages into:
+    # Regex patterns (more realistic detection)
+    patterns = [
+        r"\bcall\s+(police|ambulance)\b",
+        r"\bi\s+am\s+in\s+danger\b",
+        r"\bi'?m\s+trapped\b",
+        r"\bneed\s+help\b"
+    ]
 
-- NORMAL
-- URGENT
-- EMERGENCY
-- SARCASM
-- EXAGGERATION
+    for pattern in patterns:
+        if re.search(pattern, msg):
+            return "EMERGENCY"
 
-Return ONLY JSON:
-
-{{
-    "classification":"",
-    "confidence":0,
-    "requires_attention":false,
-    "reason":""
-}}
-
-Message:
-{message}
-"""
-
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=prompt
-    )
-    return response.text
-
+    return "NORMAL"
