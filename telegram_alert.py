@@ -1,17 +1,8 @@
-import os
 import requests
 
 def send_alert(message: str):
-
-    BOT_TOKEN = ("8751910148:AAEVfOuXy4kgaQxnd2G9PHa5UMhDErD8Tz8")
-    CHAT_ID = ("7798249693")
-
-    print("BOT:", BOT_TOKEN)
-    print("CHAT:", CHAT_ID)
-
-    if not BOT_TOKEN or not CHAT_ID:
-        print("Missing BOT_TOKEN or CHAT_ID")
-        return
+    BOT_TOKEN = "YOUR_NEW_BOT_TOKEN"
+    CHAT_ID = "YOUR_CHAT_ID"
 
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
 
@@ -20,7 +11,8 @@ def send_alert(message: str):
         "text": message
     }
 
-    response = requests.post(url, data=payload)
-
-    print("STATUS:", response.status_code)
-    print("Telegram response:", response.text)
+    try:
+        response = requests.post(url, data=payload, timeout=10)
+        print("Telegram status:", response.status_code)
+    except Exception as e:
+        print("Telegram error:", e)

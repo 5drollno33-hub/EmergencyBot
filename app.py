@@ -1,28 +1,12 @@
-from flask import Flask, request
-from classifier import classify
-from telegram_alert import send_alert
+from flask import Flask
 
 app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return "Emergency Bot Running"
-
-@app.route("/whatsapp", methods=["POST"])
-def whatsapp():
-
-    msg = request.form.get("Body", "")
-    sender = request.form.get("From", "")
-
-    result = classify(msg)
-
-    if result == "EMERGENCY":
-        send_alert(
-            f"🚨 EMERGENCY DETECTED 🚨\n\nFrom: {sender}\nMessage: {msg}"
-        )
-
-    return "OK", 200
-
+    return "OK WORKING"
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    import os
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
